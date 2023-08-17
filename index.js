@@ -39,8 +39,8 @@ app.post("/", (req, resp) => {
 
 // ***********************************  Update Data into MYSQL  ******************
 
-app.put("/:id", (req, resp) => {
-    const id = req.params.id;
+app.put("/:personId", (req, resp) => {
+    const id = req.params.personId;
     const { personId, firstname, lastname, city, salary, pincode } = req.body;
     const updateData = {
         personId,
@@ -50,7 +50,8 @@ app.put("/:id", (req, resp) => {
         salary,
         pincode
     };
-    connectMySQL.query("update test set ? where id=?", [updateData, id], (err, result) => {
+    console.log(updateData)
+    connectMySQL.query("update test set ? where personId=?", [updateData, id], (err, result) => {
         if (err) {
             resp.send(err)
         }
@@ -61,16 +62,18 @@ app.put("/:id", (req, resp) => {
 })
 
 // *********************  Delete Data from MYSQL  ******************//
-app.delete("/:id", (req, resp) => {
-    console.log(req.body)
-    const id = req.params.id;
-    connectMySQL.query("delete from  test where id=?" , [id], (error, result) => {
+app.delete("/:personId", (req, resp) => {
+    
+    const personId = req.params.personId;
+    console.log(personId)
+    connectMySQL.query("DELETE FROM test WHERE personId = ?", [personId], (error, result) => {
         if (error) {
-            resp.send(error)
+            console.error("Error executing query:", error);
+            resp.status(500).json({ error: "An error occurred while deleting data." });
         } else {
-            resp.send(result)
+            resp.json({ message: "Data deleted successfully.", result });
         }
-    })
+    });
 
 })
 
